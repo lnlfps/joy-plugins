@@ -1,6 +1,6 @@
-# Next.js + CSS
+# @symph/joy + CSS
 
-Import `.css` files in your Next.js project
+Import `.css` files in your @symph/joy project
 
 ## Installation
 
@@ -16,22 +16,22 @@ yarn add @symph/joy-css
 
 ## Usage
 
-The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/zeit/next.js#custom-document). The file will be served from `/_symphony/static/style.css`
+The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/lnlfps/symph-joy#custom-document). The file will be served from `/_symphony/static/style.css`
 
 ```js
 // ./pages/_document.js
-import Document, { Head, Main, NextScript } from '@symph/joy/document'
+import Document, { Head, Main, JoyScript } from '@symph/joy/document'
 
 export default class MyDocument extends Document {
   render() {
     return (
       <html>
         <Head>
-          <link rel="stylesheet" href="/_next/static/style.css" />
+          <link rel="stylesheet" href="/_symphony/static/style.css" />
         </Head>
         <body>
           <Main />
-          <NextScript />
+          <JoyScript />
         </body>
       </html>
     )
@@ -98,7 +98,7 @@ You can also pass a list of options to the `css-loader` by passing an object cal
 For instance, [to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope), you can write:
 
 ```js
-// next.config.js
+// joy.config.js
 const withCSS = require('@symph/joy-css')
 module.exports = withCSS({
   cssModules: true,
@@ -139,18 +139,18 @@ For a list of supported options, [refer to the webpack `css-loader` README](http
 
 ```js
 // ./pages/_document.js
-import Document, { Head, Main, NextScript } from '@symph/joy/document'
+import Document, { Head, Main, JoyScript } from '@symph/joy/document'
 
 export default class MyDocument extends Document {
   render() {
     return (
       <html>
         <Head>
-          <link rel="stylesheet" href="/_next/static/style.css" />
+          <link rel="stylesheet" href="/_symphony/static/style.css" />
         </Head>
         <body>
           <Main />
-          <NextScript />
+          <JoyScript />
         </body>
       </html>
     )
@@ -164,7 +164,7 @@ export default class MyDocument extends Document {
 Create a `joy.config.js` in your project
 
 ```js
-// next.config.js
+// joy.config.js
 const withCSS = require('@symph/joy-css')
 module.exports = withCSS()
 ```
@@ -195,9 +195,9 @@ Create a CSS file `style.css` the CSS here is using the css-variables postcss pl
 
 When `postcss.config.js` is not found `postcss-loader` will not be added and will not cause overhead.
 
-### Configuring Next.js
+### Configuring
 
-Optionally you can add your custom Next.js configuration as parameter
+Optionally you can add your custom @symph/joy configuration as parameter
 
 ```js
 // joy.config.js

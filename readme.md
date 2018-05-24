@@ -1,28 +1,11 @@
-# Next.js Plugins
+# @symph/joy Plugins
 
-## Official Next.js plugins
+## plugins
 
-- [@zeit/next-css](./packages/next-css)
-- [@zeit/next-sass](./packages/next-sass)
-- [@zeit/next-less](./packages/next-less)
-- [@zeit/next-stylus](./packages/next-stylus)
-- [@zeit/next-preact](./packages/next-preact)
-- [@zeit/next-typescript](./packages/next-typescript)
-- [@zeit/next-bundle-analyzer](./packages/next-bundle-analyzer)
-- [@zeit/next-source-maps](./packages/next-source-maps)
+- [@symph/joy-css](./packages/joy-css)
+- [@symph/joy-less](./packages/joy-less)
+- [@symph/joy-image](./packages/joy-image)
 
-## Community made plugins
-
-- [next-awesome-typescript](https://github.com/saitonakamura/next-awesome-typescript)
-- [next-compose-plugins](https://github.com/cyrilwanner/next-compose-plugins)
-- [next-images](https://github.com/arefaslani/next-images)
-- [next-inferno](https://github.com/queses/next-inferno)
-- [next-offline](https://github.com/hanford/next-offline)
-- [next-optimized-images](https://github.com/cyrilwanner/next-optimized-images)
-- [next-pino](https://github.com/khaeransori/next-pino)
-- [next-plugin-graphql](https://github.com/lfades/next-plugin-graphql)
-- [next-testcafe-build](https://github.com/formatlos/next-testcafe-build)
-- [next-runtime-dotenv](https://github.com/tusbar/next-runtime-dotenv)
 
 ## Adding a plugin
 
@@ -32,11 +15,11 @@
 2. Add `package.json` to the directory with these contents:
 ```
 {
-  "name": "@zeit/next-<NAME>",
+  "name": "@symph/joy-<NAME>",
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
-  "repository": "zeit/next-plugins"
+  "repository": "lnlfps/joy-plugins"
 }
 ```
 

@@ -1,6 +1,6 @@
 # Joy + Less
 
-Import `.less` files in your Next.js project
+Import `.less` files in your @symph/joy project
 
 ## Installation
 
@@ -16,11 +16,11 @@ yarn add @symph/joy-less less
 
 ## Usage
 
-The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/zeit/next.js#custom-document). The file will be served from `/_symphony/static/style.css`
+The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/lnlfps/symph-joy#custom-document). The file will be served from `/_symphony/static/style.css`
 
 ```js
 // ./pages/_document.js
-import Document, { Head, Main, NextScript } from '@symph/joy/document'
+import Document, { Head, Main, JoyScript } from '@symph/joy/document'
 
 export default class MyDocument extends Document {
   render() {
@@ -31,7 +31,7 @@ export default class MyDocument extends Document {
         </Head>
         <body>
           <Main />
-          <NextScript />
+          <JoyScript />
         </body>
       </html>
     )
@@ -141,7 +141,7 @@ For a list of supported options, [refer to the webpack `css-loader` README](http
 
 ```js
 // ./pages/_document.js
-import Document, { Head, Main, NextScript } from '@symph/joy/document'
+import Document, { Head, Main, JoyScript } from '@symph/joy/document'
 
 export default class MyDocument extends Document {
   render() {
@@ -152,7 +152,7 @@ export default class MyDocument extends Document {
         </Head>
         <body>
           <Main />
-          <NextScript />
+          <JoyScript />
         </body>
       </html>
     )
@@ -196,9 +196,9 @@ Create a CSS file `styles.scss` the CSS here is using the css-variables postcss 
 
 When `postcss.config.js` is not found `postcss-loader` will not be added and will not cause overhead.
 
-### Configuring Next.js
+### Configuring @symph/joy
 
-Optionally you can add your custom Next.js configuration as parameter
+Optionally you can add your custom @symph/joy configuration as parameter
 
 ```js
 // joy.config.js
