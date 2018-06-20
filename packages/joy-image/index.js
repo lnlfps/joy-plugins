@@ -1,6 +1,7 @@
 module.exports = (symphonyConfig = {}) => {
   return Object.assign({}, symphonyConfig, {
     webpack(config, options) {
+      let { dev } = options;
       if (!options.defaultLoaders) {
         throw new Error(
           'This plugin is not compatible with Symphony.js'
@@ -13,9 +14,9 @@ module.exports = (symphonyConfig = {}) => {
             loader: 'url-loader',
             options: {
               limit: 8192,
-              publicPath: '/_symphony/webpack/static',
+              publicPath: '/_symphony/static/images',
               outputPath: 'static/images',
-              name: "[name]-[hash].[ext]"
+              name: dev ? "[name]-[hash].[ext]" : "[hash].[ext]"
             }
           }
         ]
