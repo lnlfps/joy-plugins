@@ -1,6 +1,6 @@
 {
   "name": "@symph/joy-css",
-  "version": "0.1.5",
+  "version": "0.3.0",
   "main": "index.js",
   "license": "MIT",
   "repository": "lnlfps/symph-joy-plugins",
