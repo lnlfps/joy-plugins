@@ -3,7 +3,7 @@ const findUp = require('find-up')
 module.exports = (
   config,
   extractPlugin,
-  { cssModules = false, cssLoaderOptions = {}, dev, isServer, loaders = [] }
+  { cssModules = false, cssLoaderOptions = {}, postcssLoaderOptions = {}, dev, isServer, loaders = [] }
 ) => {
   const postcssConfig = findUp.sync('postcss.config.js', {
     cwd: config.context
@@ -11,13 +11,20 @@ module.exports = (
   let postcssLoader
 
   if (postcssConfig) {
+    //Copy the postcss-loader config options first.
+    let postcssOptionsConfig = Object.assign(
+      {},
+      postcssLoaderOptions.config,
+      { path: postcssConfig }
+    )
+
     postcssLoader = {
       loader: 'postcss-loader',
-      options: {
-        config: {
-          path: postcssConfig
-        }
-      }
+      options: Object.assign(
+        {},
+        postcssLoaderOptions,
+        { config: postcssOptionsConfig }
+      )
     }
   }
 
@@ -30,6 +37,7 @@ module.exports = (
         minimize: !dev,
         sourceMap: dev,
         importLoaders: loaders.length + (postcssLoader ? 1 : 0),
+        localIdentName: '[name]_[local]_[hash:base64:5]'
       },
       cssLoaderOptions
     )

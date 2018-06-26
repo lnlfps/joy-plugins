@@ -1,32 +1,44 @@
-module.exports = (symphonyConfig = {}) => {
-  return Object.assign({}, symphonyConfig, {
-    webpack(config, options) {
-      let { dev } = options;
-      if (!options.defaultLoaders) {
-        throw new Error(
-          'This plugin is not compatible with Symphony.js'
-        )
-      }
-      config.module.rules.push({
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
-        use: [
+module.exports = (pluginOptions = {}) => {
+  return module.exports = (joyConfig = {}) => {
+    return Object.assign({}, joyConfig, {
+      webpack(webpackConfig, options) {
+        const {isServer} = options;
+
+        if (typeof pluginOptions === 'function') {
+          pluginOptions = pluginOptions(options, webpackConfig, joyConfig)
+        }
+        let {
+          urlLoaderOptions,
+          ruleOptions
+        } = pluginOptions;
+
+        const assetPrefix = joyConfig.assetPrefix || "";
+
+        const rule = Object.assign(
           {
-            loader: 'url-loader',
-            options: {
-              limit: 8192,
-              publicPath: '/_symphony/static/images',
-              outputPath: 'static/images',
-              name: dev ? "[name]-[hash].[ext]" : "[hash].[ext]"
+            test: /\.(jpe?g|png|svg|gif)$/,
+            use: {
+              loader: "url-loader",
+              options: Object.assign({
+                limit: 8192,
+                fallback: "file-loader",
+                publicPath: `${assetPrefix}/_symphony/static/images/`,
+                outputPath: `${isServer ? "../" : ""}static/images/`,
+                name: "[name]-[hash].[ext]"
+              }, urlLoaderOptions)
             }
-          }
-        ]
-      });
+          },
+          ruleOptions)
 
-      if (typeof symphonyConfig.webpack === 'function') {
-        return symphonyConfig.webpack(config, options)
+        webpackConfig.module.rules.push(rule);
+
+        if (typeof joyConfig.webpack === 'function') {
+          return joyConfig.webpack(webpackConfig, options)
+        }
+
+        return webpackConfig
       }
+    })
+  }
+}
 
-      return config
-    }
-  })
-};

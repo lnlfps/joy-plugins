@@ -1,17 +1,17 @@
-# Joy + Less
+# @symph/joy + CSS
 
-Import `.less` files in your @symph/joy project
+Import `.css` files in your @symph/joy project
 
 ## Installation
 
 ```
-npm install --save @symph/joy-less less
+npm install --save @symph/joy-css
 ```
 
 or
 
 ```
-yarn add @symph/joy-less less
+yarn add @symph/joy-css
 ```
 
 ## Usage
@@ -46,22 +46,26 @@ Create a `joy.config.js` in your project
 ```js
 // joy.config.js
 const withLess = require('@symph/joy-less')
-module.exports = withLess()
-```
 
-Create a Less file `styles.less`
-
-```less
-@font-size: 50px;
-.example {
-  font-size: @font-size;
+module.exports = {
+  plugins: [
+    withLess()
+  ]
 }
 ```
 
-Create a page file `pages/index.js`
+Create a CSS file `style.less`
+
+```css
+.example {
+  font-size: 50px;
+}
+```
+
+Create a page file `src/index.js`
 
 ```js
-import "../styles.less"
+import "../style.less"
 
 export default () => <div className="example">Hello World!</div>
 ```
@@ -71,26 +75,27 @@ export default () => <div className="example">Hello World!</div>
 ```js
 // joy.config.js
 const withLess = require('@symph/joy-less')
-module.exports = withLess({
-  cssModules: true
-})
-```
-
-Create a Less file `styles.less`
-
-```less
-@font-size: 50px;
-.example {
-  font-size: @font-size;
+module.exports = {
+  plugins: [
+    withLess({cssModules: true})
+  ]
 }
 ```
 
-Create a page file `pages/index.js`
+Create a CSS file `style.less`
+
+```css
+.example {
+  font-size: 50px;
+}
+```
+
+Create a page file `src/index.js`
 
 ```js
-import css from "../styles.less"
+import styles from "../style.less"
 
-export default () => <div className={css.example}>Hello World!</div>
+export default () => <div className={styles.example}>Hello World!</div>
 ```
 
 ### With CSS modules and options
@@ -102,16 +107,20 @@ For instance, [to enable locally scoped CSS modules](https://github.com/css-modu
 ```js
 // joy.config.js
 const withLess = require('@symph/joy-less')
-module.exports = withLess({
-  cssModules: true,
-  cssLoaderOptions: {
-    importLoaders: 1,
-    localIdentName: "[local]___[hash:base64:5]",
-  }
-})
+module.exports = {
+  plugins: [
+    withLess({
+      cssModules: true,
+      cssLoaderOptions: {
+        importLoaders: 1,
+        localIdentName: "[local]___[hash:base64:5]",
+      }
+    })
+  ]
+}
 ```
 
-Create a CSS file `styles.css`
+Create a CSS file `styles.less`
 
 ```css
 .example {
@@ -119,14 +128,14 @@ Create a CSS file `styles.css`
 }
 ```
 
-Create a page file `pages/index.js` that imports your stylesheet and uses the hashed class name from the stylesheet
+Create a page file `src/index.js` that imports your stylesheet and uses the hashed class name from the stylesheet
 
 ```js
-import css from "../style.css"
+import styles from "../style.less"
 
 const Component = props => {
   return (
-    <div className={css.backdrop}>
+    <div className={styles.example}>
       ...
     </div>
   )
@@ -160,6 +169,7 @@ export default class MyDocument extends Document {
 }
 ```
 
+
 ### PostCSS plugins
 
 Create a `joy.config.js` in your project
@@ -167,7 +177,11 @@ Create a `joy.config.js` in your project
 ```js
 // joy.config.js
 const withLess = require('@symph/joy-less')
-module.exports = withLess()
+module.exports = {
+  plugins: [
+    withLess()
+  ]
+}
 ```
 
 Create a `postcss.config.js`
@@ -181,7 +195,7 @@ module.exports = {
 }
 ```
 
-Create a CSS file `styles.scss` the CSS here is using the css-variables postcss plugin.
+Create a CSS file `style.less` the CSS here is using the css-variables postcss plugin.
 
 ```css
 :root {
@@ -196,16 +210,85 @@ Create a CSS file `styles.scss` the CSS here is using the css-variables postcss 
 
 When `postcss.config.js` is not found `postcss-loader` will not be added and will not cause overhead.
 
-### Configuring @symph/joy
+### Configuring
 
 Optionally you can add your custom @symph/joy configuration as parameter
 
 ```js
 // joy.config.js
 const withLess = require('@symph/joy-less')
-module.exports = withLess({
-  webpack(config, options) {
-    return config
-  }
+module.exports = {
+  plugins: [
+    withLess({cssModules: true})
+  ]
+}
+```
+
+### Options 
+
+##### cssModules
+
+type: bool, default: false
+
+enable locally scoped CSS modules, [to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope).
+
+
+#### extractCSSPlugin
+
+type: [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), default: 
+
+```js
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+extractCSSPlugin = new ExtractTextPlugin({
+  filename: 'static/style.css',
+  allChunks: true
 })
 ```
+Is instance of [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), if the value is null, a default item will be created by plugin.
+
+#### cssLoaderOptions
+
+type: object, default: 
+
+```js
+{
+  modules: cssModules,
+  minimize: !dev,
+  sourceMap: dev,
+  importLoaders: loaders.length + (postcssLoader ? 1 : 0),
+  localIdentName: '[name]_[local]_[hash:base64:5]'
+}
+```
+
+For a list of supported options, [refer to the webpack `css-loader` README](https://github.com/webpack-contrib/css-loader#options).
+
+#### postcssLoaderOptions
+
+type: object, default: 
+
+```js
+{
+  config:{
+    path: 'postcss.config.js'
+  }
+}
+```
+For a list of supported options, [refer to the `postcss-loader` README](https://github.com/postcss/postcss-loader#options).
+
+#### lessLoaderOptions
+
+type: object, default: null
+
+For details, [refer to the webpack `less-loader` README](https://github.com/webpack-contrib/less-loader).
+
+### ruleOptions
+
+type: object, default:
+```javascript
+{
+  test: /\.less$/,
+}
+```
+
+We can used this to custom a rule in [webpackConfig.module.rules](https://webpack.js.org/configuration/module/#rule), such as the properties [test](https://webpack.js.org/configuration/module/#rule-test), [include](https://webpack.js.org/configuration/module/#rule-include), [exclude](https://webpack.js.org/configuration/module/#rule-exclude) and [resource](https://webpack.js.org/configuration/module/#rule-resource) etc.

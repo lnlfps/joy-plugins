@@ -46,7 +46,12 @@ Create a `joy.config.js` in your project
 ```js
 // joy.config.js
 const withCSS = require('@symph/joy-css')
-module.exports = withCSS()
+
+module.exports = {
+  plugins: [
+    withCSS()
+  ]
+}
 ```
 
 Create a CSS file `style.css`
@@ -57,7 +62,7 @@ Create a CSS file `style.css`
 }
 ```
 
-Create a page file `pages/index.js`
+Create a page file `src/index.js`
 
 ```js
 import "../style.css"
@@ -70,9 +75,11 @@ export default () => <div className="example">Hello World!</div>
 ```js
 // joy.config.js
 const withCSS = require('@symph/joy-css')
-module.exports = withCSS({
-  cssModules: true
-})
+module.exports = {
+  plugins: [
+    withCSS({cssModules: true})
+  ]
+}
 ```
 
 Create a CSS file `style.css`
@@ -83,12 +90,12 @@ Create a CSS file `style.css`
 }
 ```
 
-Create a page file `pages/index.js`
+Create a page file `src/index.js`
 
 ```js
-import css from "../style.css"
+import styles from "../style.css"
 
-export default () => <div className={css.example}>Hello World!</div>
+export default () => <div className={styles.example}>Hello World!</div>
 ```
 
 ### With CSS modules and options
@@ -100,13 +107,17 @@ For instance, [to enable locally scoped CSS modules](https://github.com/css-modu
 ```js
 // joy.config.js
 const withCSS = require('@symph/joy-css')
-module.exports = withCSS({
-  cssModules: true,
-  cssLoaderOptions: {
-    importLoaders: 1,
-    localIdentName: "[local]___[hash:base64:5]",
-  }
-})
+module.exports = {
+  plugins: [
+    withCSS({
+      cssModules: true,
+      cssLoaderOptions: {
+        importLoaders: 1,
+        localIdentName: "[local]___[hash:base64:5]",
+      }
+    })
+  ]
+}
 ```
 
 Create a CSS file `styles.css`
@@ -117,14 +128,14 @@ Create a CSS file `styles.css`
 }
 ```
 
-Create a page file `pages/index.js` that imports your stylesheet and uses the hashed class name from the stylesheet
+Create a page file `src/index.js` that imports your stylesheet and uses the hashed class name from the stylesheet
 
 ```js
-import css from "../style.css"
+import styles from "../style.css"
 
 const Component = props => {
   return (
-    <div className={css.backdrop}>
+    <div className={styles.example}>
       ...
     </div>
   )
@@ -166,7 +177,11 @@ Create a `joy.config.js` in your project
 ```js
 // joy.config.js
 const withCSS = require('@symph/joy-css')
-module.exports = withCSS()
+module.exports = {
+  plugins: [
+    withCSS()
+  ]
+}
 ```
 
 Create a `postcss.config.js`
@@ -202,9 +217,72 @@ Optionally you can add your custom @symph/joy configuration as parameter
 ```js
 // joy.config.js
 const withCSS = require('@symph/joy-css')
-module.exports = withCSS({
-  webpack(config, options) {
-    return config
-  }
+module.exports = {
+  plugins: [
+    withCSS({cssModules: true})
+  ]
+}
+```
+
+### Options 
+
+##### cssModules
+
+type: bool, default: false
+
+enable locally scoped CSS modules, [to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope).
+
+
+#### extractCSSPlugin
+
+type: [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), default: 
+
+```js
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+extractCSSPlugin = new ExtractTextPlugin({
+  filename: 'static/style.css',
+  allChunks: true
 })
 ```
+Is instance of [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), if the value is null, a default item will be created by plugin.
+
+#### cssLoaderOptions
+
+type: object, default: 
+
+```js
+{
+  modules: cssModules,
+  minimize: !dev,
+  sourceMap: dev,
+  importLoaders: loaders.length + (postcssLoader ? 1 : 0),
+  localIdentName: '[name]_[local]_[hash:base64:5]'
+}
+```
+
+For a list of supported options, [refer to the webpack `css-loader` README](https://github.com/webpack-contrib/css-loader#options).
+
+#### postcssLoaderOptions
+
+type: object, default: 
+
+```js
+{
+  config:{
+    path: 'postcss.config.js'
+  }
+}
+```
+For a list of supported options, [refer to the `postcss-loader` README](https://github.com/postcss/postcss-loader#options).
+
+### ruleOptions
+
+type: object, default:
+```javascript
+{
+  test: /\.css$/,
+}
+```
+
+We can used this to custom a rule in [webpackConfig.module.rules](https://webpack.js.org/configuration/module/#rule), such as the properties [test](https://webpack.js.org/configuration/module/#rule-test), [include](https://webpack.js.org/configuration/module/#rule-include), [exclude](https://webpack.js.org/configuration/module/#rule-exclude) and [resource](https://webpack.js.org/configuration/module/#rule-resource) etc.
