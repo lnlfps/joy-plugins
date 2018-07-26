@@ -23,7 +23,7 @@ module.exports = (
       options: Object.assign(
         {},
         postcssLoaderOptions,
-        { config: postcssOptionsConfig }
+        { config: postcssOptionsConfig.path }
       )
     }
   }
