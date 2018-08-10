@@ -1,6 +1,6 @@
 {
   "name": "@symph/joy-less",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "index.js",
   "license": "MIT",
   "repository": "lnlfps/symph-joy-plugins",
@@ -10,7 +10,7 @@
     "less-loader": "4.1.0"
   },
   "devDependencies": {
-    "less": "^2.7.3",
+    "less": "^3.8.0",
     "webpack": "^3.10.0"
   },
   "peerDependencies": {
