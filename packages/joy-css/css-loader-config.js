@@ -1,8 +1,8 @@
 const findUp = require('find-up')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 module.exports = (
   config,
-  extractPlugin,
   { cssModules = false, cssLoaderOptions = {}, postcssLoaderOptions = {}, dev, isServer, loaders = [] }
 ) => {
   const postcssConfig = findUp.sync('postcss.config.js', {
@@ -11,8 +11,8 @@ module.exports = (
   let postcssLoader
 
   if (postcssConfig) {
-    //Copy the postcss-loader config options first.
-    let postcssOptionsConfig = Object.assign(
+    // Copy the postcss-loader config options first.
+    const postcssOptionsConfig = Object.assign(
       {},
       postcssLoaderOptions.config,
       { path: postcssConfig }
@@ -23,7 +23,7 @@ module.exports = (
       options: Object.assign(
         {},
         postcssLoaderOptions,
-        { config: postcssOptionsConfig.path }
+        { config: postcssOptionsConfig }
       )
     }
   }
@@ -54,9 +54,7 @@ module.exports = (
   }
 
   return [
-    dev && 'extracted-loader',
-    ...extractPlugin.extract({
-      use: [cssLoader, postcssLoader, ...loaders].filter(Boolean)
-    })
+    dev ? {loader:'style-loader'} : MiniCssExtractPlugin.loader,
+    cssLoader, postcssLoader, ...loaders
   ].filter(Boolean)
 }

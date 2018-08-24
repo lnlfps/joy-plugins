@@ -38,7 +38,7 @@ module.exports = {
 }
 ```
 
-### options 
+### Options 
 
 #### urlLoaderOptions
 

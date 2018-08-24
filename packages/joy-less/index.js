@@ -1,6 +1,8 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
 const cssLoaderConfig = require('@symph/joy-css/css-loader-config')
 const commonsChunkConfig = require('@symph/joy-css/commons-chunk-config')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const {CLIENT_STATIC_FILES_PATH}  = require('@symph/joy/constants')
 
 module.exports = (pluginOptions = {}) => {
   return (joyConfig = {}) => {
@@ -26,10 +28,10 @@ module.exports = (pluginOptions = {}) => {
         // So that they compile to the same file in production
         extractCSSPlugin = extractCSSPlugin || joyConfig.extractCSSPlugin || options.extractCSSPlugin
 
-        if (!extractCSSPlugin) {
-          extractCSSPlugin = new ExtractTextPlugin({
-            filename: 'static/style.css',
-            allChunks: true
+        if (!isServer && !extractCSSPlugin) {
+          extractCSSPlugin = new MiniCssExtractPlugin({
+            filename: `${CLIENT_STATIC_FILES_PATH}/styles/[name]-${dev ? '' : '[hash]'}.css`,
+            chunkFilename: `${CLIENT_STATIC_FILES_PATH}/styles/[id]-${dev ? '' : '[hash]'}.css`
           })
           webpackConfig.plugins.push(extractCSSPlugin)
           options.extractCSSPlugin = extractCSSPlugin
@@ -38,7 +40,7 @@ module.exports = (pluginOptions = {}) => {
           }
         }
 
-        let lessLoader = cssLoaderConfig(webpackConfig, extractCSSPlugin, {
+        const lessLoader = cssLoaderConfig(webpackConfig, {
           cssModules,
           cssLoaderOptions,
           postcssLoaderOptions,
