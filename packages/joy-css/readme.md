@@ -16,7 +16,7 @@ yarn add @symph/joy-css
 
 ## Usage
 
-The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/lnlfps/symph-joy#custom-document). The file will be served from `/_symphony/static/style.css`
+The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/lnlfps/symph-joy#custom-document). The file will be served from `/_joy/static/style.css`
 
 ```js
 // ./pages/_document.js
@@ -27,7 +27,7 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
-          <link rel="stylesheet" href="/_symphony/static/style.css" />
+          <link rel="stylesheet" href="/_joy/static/style.css" />
         </Head>
         <body>
           <Main />
@@ -157,7 +157,7 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
-          <link rel="stylesheet" href="/_symphony/static/style.css" />
+          <link rel="stylesheet" href="/_joy/static/style.css" />
         </Head>
         <body>
           <Main />

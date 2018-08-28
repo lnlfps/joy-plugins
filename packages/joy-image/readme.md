@@ -1,6 +1,6 @@
 # Image Loader 
 
-Tt's an image loader for symphony-joy, we can require a image in jsx. 
+Tt's an image loader for @symph/joy, we can require a image in jsx. 
 
 
 ## Installation
@@ -47,7 +47,7 @@ type: object, default:
 ```javascript
 {
   limit: 8192,
-  publicPath: `${assetPrefix}/_symphony/static/images/`,
+  publicPath: `${assetPrefix}/_joy/static/images/`,
   outputPath: `${isServer ? "../" : ""}static/images/`,
   name: "[name]-[hash].[ext]"
 }
