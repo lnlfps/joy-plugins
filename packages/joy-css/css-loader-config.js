@@ -37,7 +37,7 @@ module.exports = (
         minimize: !dev,
         sourceMap: dev,
         importLoaders: loaders.length + (postcssLoader ? 1 : 0),
-        localIdentName: '[name]_[local]_[hash:base64:5]'
+        localIdentName: dev ? '[name]_[local]_[hash:base64:5]' : '_[hash:base64:5]'
       },
       cssLoaderOptions
     )

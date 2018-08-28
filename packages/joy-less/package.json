@@ -1,13 +1,13 @@
 {
   "name": "@symph/joy-less",
-  "version": "0.4.1",
+  "version": "0.4.4",
   "main": "index.js",
   "license": "MIT",
   "repository": "lnlfps/symph-joy-plugins",
   "dependencies": {
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
-    "@symph/joy-css": "^0.4.1",
+    "@symph/joy-css": "^0.4.4",
     "mini-css-extract-plugin": "^0.4.2"
   },
   "peerDependencies": {
