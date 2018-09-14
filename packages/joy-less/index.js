@@ -1,8 +1,5 @@
 
 const cssLoaderConfig = require('@symph/joy-css/css-loader-config')
-const commonsChunkConfig = require('@symph/joy-css/commons-chunk-config')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const {CLIENT_STATIC_FILES_PATH}  = require('@symph/joy/constants')
 
 module.exports = (pluginOptions = {}) => {
   return (joyConfig = {}) => {
@@ -21,38 +18,11 @@ module.exports = (pluginOptions = {}) => {
           ruleOptions
         } = pluginOptions;
 
-        const {dev, isServer} = options
-
-        // Support the user providing their own instance of ExtractTextPlugin.
-        // If extractCSSPlugin is not defined we pass the same instance of ExtractTextPlugin to all css related modules
-        // So that they compile to the same file in production
-        extractCSSPlugin = extractCSSPlugin || joyConfig.extractCSSPlugin || options.extractCSSPlugin
-
-        if (!isServer && !extractCSSPlugin && !dev) {
-          extractCSSPlugin = new MiniCssExtractPlugin({
-            filename: `${CLIENT_STATIC_FILES_PATH}/styles/[name]-${dev ? '' : '[hash]'}.css`,
-            chunkFilename: `${CLIENT_STATIC_FILES_PATH}/styles/style.css`
-          })
-          webpackConfig.plugins.push(extractCSSPlugin)
-          webpackConfig.optimization.splitChunks.cacheGroups.styles = {
-            name: 'styles',
-            test: /\.(css|less|sass|scss)$/,
-            chunks: 'all',
-            enforce: true
-          }
-          options.extractCSSPlugin = extractCSSPlugin
-
-          if (!isServer) {
-            webpackConfig = commonsChunkConfig(webpackConfig, /\.less$/)
-          }
-        }
-
-        const lessLoader = cssLoaderConfig(webpackConfig, {
+        const lessLoader = cssLoaderConfig(webpackConfig, options, joyConfig, {
           cssModules,
           cssLoaderOptions,
           postcssLoaderOptions,
-          dev,
-          isServer,
+          extractCSSPlugin,
           loaders: [
             {
               loader: 'less-loader',
@@ -60,6 +30,7 @@ module.exports = (pluginOptions = {}) => {
             }
           ]
         })
+
         if (isDefault) {
           options.defaultLoaders.less = lessLoader;
         }

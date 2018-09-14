@@ -1,7 +1,4 @@
 const cssLoaderConfig = require('./css-loader-config')
-const commonsChunkConfig = require('./commons-chunk-config')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {CLIENT_STATIC_FILES_PATH}  = require('@symph/joy/constants')
 
 module.exports = (pluginOptions = {}) => {
   return (nextConfig = {}) => {
@@ -20,37 +17,11 @@ module.exports = (pluginOptions = {}) => {
           ruleOptions
         } = pluginOptions;
 
-        const {dev, isServer} = options
-        // Support the user providing their own instance of ExtractTextPlugin.
-        // If extractCSSPlugin is not defined we pass the same instance of ExtractTextPlugin to all css related modules
-        // So that they compile to the same file in production
-        extractCSSPlugin = extractCSSPlugin || nextConfig.extractCSSPlugin || options.extractCSSPlugin
-
-        if (!isServer && !extractCSSPlugin && !dev) {
-          extractCSSPlugin = new MiniCssExtractPlugin({
-            filename: `${CLIENT_STATIC_FILES_PATH}/styles/[name]-${dev ? '' : '[hash]'}.css`,
-            chunkFilename: `${CLIENT_STATIC_FILES_PATH}/styles/style.css`
-          })
-          webpackConfig.plugins.push(extractCSSPlugin)
-          webpackConfig.optimization.splitChunks.cacheGroups.styles = {
-            name: 'styles',
-            test: /\.(css|less|sass|scss)$/,
-            chunks: 'all',
-            enforce: true
-          }
-          options.extractCSSPlugin = extractCSSPlugin
-
-          if (!isServer) {
-            webpackConfig = commonsChunkConfig(webpackConfig)
-          }
-        }
-
-        const cssLoader = cssLoaderConfig(webpackConfig, {
+        const cssLoader = cssLoaderConfig(webpackConfig, options, nextConfig, {
           cssModules,
           cssLoaderOptions,
           postcssLoaderOptions,
-          dev,
-          isServer
+          extractCSSPlugin
         })
         if (isDefault) {
           options.defaultLoaders.css = cssLoader

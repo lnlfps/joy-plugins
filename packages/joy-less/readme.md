@@ -1,49 +1,34 @@
-# @symph/joy + CSS
+# @symph/joy + LESS
 
-Import `.css` files in your @symph/joy project
+在`@symph/joy`项目中使用`.less`样式，需要添加本插件。需要添加本插件。可使用不同的配置，创建多个插件实例，来处理不同模块下的样式。
 
-## Installation
-
-```
-npm install --save @symph/joy-css
-```
-
-or
+## 安装
 
 ```
-yarn add @symph/joy-css
+npm install --save @symph/joy-less
 ```
 
-## Usage
+或者
 
-The stylesheet is compiled to `.joy/static/style.css`. You have to include it into the page using a custom [`_document.js`](https://github.com/lnlfps/symph-joy#custom-document). The file will be served from `/_joy/static/style.css`
-
-```js
-// ./pages/_document.js
-import Document, { Head, Main, JoyScript } from '@symph/joy/document'
-
-export default class MyDocument extends Document {
-  render() {
-    return (
-      <html>
-        <Head>
-          <link rel="stylesheet" href="/_joy/static/style.css" />
-        </Head>
-        <body>
-          <Main />
-          <JoyScript />
-        </body>
-      </html>
-    )
-  }
-}
+```
+yarn add @symph/joy-less
 ```
 
-### Without CSS modules
+## 使用方法
 
-Create a `joy.config.js` in your project
+开发模式时，使用webpack `style-loader`插件将样式打包到chunk代码中，以便实现热更新，即在修改样式后，不用刷新浏览器就可看到修改后的效果。
 
-```js
+> `style-loader`加载样式有个副作用，因为css样式是在js输出界面标签元素后，才注入到页面中的，所以开始会有一瞬间，html标签是没有样式的，界面可能会闪烁一下，这个问题在生产包里不可见的，也不会影响调试，请放心使用。
+
+打生产包时，使用`mini-css-extract-plugin`来提取所有的样式到`.joy/static/styles/style.css`中，以便提高加载效率，这个文件的引用会自动添加到`_document.js`文档中，在初始请求的返回的html文档中，会包含该样式的引用。
+
+### 关闭 CSS modules
+
+如果不使用css modules, 在`.less`文件中定义的样式，都是全局的，任何地方都可以使用其定义的样式。
+
+在项目中创建 `joy.config.js` 配置文件。
+
+```javascript
 // joy.config.js
 const withLess = require('@symph/joy-less')
 
@@ -54,7 +39,7 @@ module.exports = {
 }
 ```
 
-Create a CSS file `style.less`
+创建一个LESS文件 `src/style.less`
 
 ```css
 .example {
@@ -62,17 +47,19 @@ Create a CSS file `style.less`
 }
 ```
 
-Create a page file `src/index.js`
+创建界面组件 `src/index.js`，并使用样式。
 
-```js
+```javascript
 import "../style.less"
 
 export default () => <div className="example">Hello World!</div>
 ```
 
-### With CSS modules
+### 启用 CSS modules
 
-```js
+如果开启css modules，`.less`文件中定义的样式名称，将只在这个less文件中可见，不会和其他less文件中定义同名样式冲突。外部使用这些样式时，需要通过`import`的方式来导入这个less文
+
+```javascript
 // joy.config.js
 const withLess = require('@symph/joy-less')
 module.exports = {
@@ -82,7 +69,7 @@ module.exports = {
 }
 ```
 
-Create a CSS file `style.less`
+创建LESS文件 `style.less`
 
 ```css
 .example {
@@ -90,21 +77,21 @@ Create a CSS file `style.less`
 }
 ```
 
-Create a page file `src/index.js`
+创建界面组件 `src/index.js`，并使用样式。
 
-```js
+```javascript
 import styles from "../style.less"
 
 export default () => <div className={styles.example}>Hello World!</div>
 ```
 
-### With CSS modules and options
+### 启动CSS modules和自定义配置
 
-You can also pass a list of options to the `css-loader` by passing an object called `cssLoaderOptions`.
+你依然可以传递定义配置给`css-loader`，请使用`cssLoaderOptions`配置项。
 
-For instance, [to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope), you can write:
+例如, [创建带域名称的样式](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope)，代码如下:
 
-```js
+```javascript
 // joy.config.js
 const withLess = require('@symph/joy-less')
 module.exports = {
@@ -112,7 +99,6 @@ module.exports = {
     withLess({
       cssModules: true,
       cssLoaderOptions: {
-        importLoaders: 1,
         localIdentName: "[local]___[hash:base64:5]",
       }
     })
@@ -120,7 +106,7 @@ module.exports = {
 }
 ```
 
-Create a CSS file `styles.less`
+创建LESS样式文件 `styles.less`。
 
 ```css
 .example {
@@ -128,9 +114,10 @@ Create a CSS file `styles.less`
 }
 ```
 
-Create a page file `src/index.js` that imports your stylesheet and uses the hashed class name from the stylesheet
 
-```js
+创建界面组件 `src/index.js`，并使用带有域名和hash的样式名称。
+
+```javascript
 import styles from "../style.less"
 
 const Component = props => {
@@ -144,37 +131,16 @@ const Component = props => {
 export default Component
 ```
 
-Your exported HTML will then reflect locally scoped CSS class names.
+如果你将其导出为静态页面，样式变量`styles.example`将转化为对应的字符串样式名称，例如：`<div class="index_examole__f2ae1">`。
 
-For a list of supported options, [refer to the webpack `css-loader` README](https://github.com/webpack-contrib/css-loader#options).
-
-```js
-// ./pages/_document.js
-import Document, { Head, Main, JoyScript } from '@symph/joy/document'
-
-export default class MyDocument extends Document {
-  render() {
-    return (
-      <html>
-        <Head>
-          <link rel="stylesheet" href="/_joy/static/style.css" />
-        </Head>
-        <body>
-          <Main />
-          <JoyScript />
-        </body>
-      </html>
-    )
-  }
-}
-```
+`css-loader`支持的配置参数列表，请查阅 [css-loader README](https://github.com/webpack-contrib/css-loader#options).
 
 
-### PostCSS plugins
+### PostCSS 
 
-Create a `joy.config.js` in your project
+在项目中创建 `joy.config.js` 配置文件
 
-```js
+```javascript
 // joy.config.js
 const withLess = require('@symph/joy-less')
 module.exports = {
@@ -184,9 +150,9 @@ module.exports = {
 }
 ```
 
-Create a `postcss.config.js`
+在项目中创建PostCSS的配置文件 `postcss.config.js`，并添加`postcss-css-variables`插件来支持css变量。
 
-```js
+```javascript
 module.exports = {
   plugins: {
     // Illustrational
@@ -195,7 +161,7 @@ module.exports = {
 }
 ```
 
-Create a CSS file `style.less` the CSS here is using the css-variables postcss plugin.
+创建样式文件 `src/style.less`，此时`.less`文件中可使用`postcss-css-variables`插件提供的功能了。
 
 ```css
 :root {
@@ -208,13 +174,45 @@ Create a CSS file `style.less` the CSS here is using the css-variables postcss p
 }
 ```
 
-When `postcss.config.js` is not found `postcss-loader` will not be added and will not cause overhead.
+如果`postcss.config.js`文件不存在，`postcss-loader`将不会生效，也不会添加到loader链中。
 
-### Configuring
+### 加载不同模块的样式
 
-Optionally you can add your custom @symph/joy configuration as parameter
+在项目中创建 `joy.config.js` 配置文件
 
-```js
+```javascript
+const withLESS = require('@symph/joy-css')
+const path = require('path')
+
+module.exports = {
+  plugins: [
+    // 处理应用内的样式
+    withLESS({
+      cssModules: true,
+      ruleOptions: {
+        exclude: [
+          path.resolve(__dirname, './node_modules/')
+        ]
+      }
+    }),
+    // 处理node_module中的样式
+    withLESS({
+      cssModules: false,
+      ruleOptions: {
+        include: [
+          path.resolve(__dirname, './node_modules/')
+        ]
+      }
+    })
+  ]
+}
+```
+
+## 自定义配置
+
+你可以添加自定义的配置来定义如何加载和使用less样式。
+
+```javascript
 // joy.config.js
 const withLess = require('@symph/joy-less')
 module.exports = {
@@ -224,34 +222,34 @@ module.exports = {
 }
 ```
 
-### Options 
-
-##### cssModules
+### cssModules
 
 type: bool, default: false
 
-enable locally scoped CSS modules, [to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope).
+是否开启CSS modules，使用参考：[to enable locally scoped CSS modules](https://github.com/css-modules/css-modules/blob/master/docs/local-scope.md#css-modules--local-scope).
 
 
-#### extractCSSPlugin
+### extractCSSPlugin
 
-type: [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), default: 
+type: `mini-css-extract-plugin`, default: 
 
-```js
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+```javascript
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const {CLIENT_STATIC_FILES_PATH}  = require('@symph/joy/constants')
 
-extractCSSPlugin = new ExtractTextPlugin({
-  filename: 'static/style.css',
-  allChunks: true
+extractCSSPlugin = new MiniCssExtractPlugin({
+  filename: `${CLIENT_STATIC_FILES_PATH}/styles/[name].${dev ? '' : '[hash]'}.css`,
+  chunkFilename: `${CLIENT_STATIC_FILES_PATH}/styles/style.[hash].css` //提取后的样式文件
 })
 ```
-Is instance of [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin), if the value is null, a default item will be created by plugin.
 
-#### cssLoaderOptions
+如果这个值为空，插件将提供一个默认配置。
+
+### cssLoaderOptions
 
 type: object, default: 
 
-```js
+```javascript
 {
   modules: cssModules,
   minimize: !dev,
@@ -261,34 +259,35 @@ type: object, default:
 }
 ```
 
-For a list of supported options, [refer to the webpack `css-loader` README](https://github.com/webpack-contrib/css-loader#options).
+可选配置项, 请查阅[webpack `css-loader` README](https://github.com/webpack-contrib/css-loader#options).
 
-#### postcssLoaderOptions
+### postcssLoaderOptions
 
 type: object, default: 
 
-```js
+```javascript
 {
   config:{
     path: 'postcss.config.js'
   }
 }
 ```
-For a list of supported options, [refer to the `postcss-loader` README](https://github.com/postcss/postcss-loader#options).
+可选配置项, 请查阅[`postcss-loader` README](https://github.com/postcss/postcss-loader#options).
 
-#### lessLoaderOptions
+### lessLoaderOptions
 
 type: object, default: null
 
-For details, [refer to the webpack `less-loader` README](https://github.com/webpack-contrib/less-loader).
+可选配置项，请查阅[webpack `less-loader` README](https://github.com/webpack-contrib/less-loader).
 
 ### ruleOptions
 
 type: object, default:
+
 ```javascript
 {
   test: /\.less$/,
 }
 ```
 
-We can used this to custom a rule in [webpackConfig.module.rules](https://webpack.js.org/configuration/module/#rule), such as the properties [test](https://webpack.js.org/configuration/module/#rule-test), [include](https://webpack.js.org/configuration/module/#rule-include), [exclude](https://webpack.js.org/configuration/module/#rule-exclude) and [resource](https://webpack.js.org/configuration/module/#rule-resource) etc.
+可用配置项，请查阅[webpackConfig.module.rules](https://webpack.js.org/configuration/module/#rule)。

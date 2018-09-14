@@ -1,4 +1,4 @@
-# Image Loader 
+# @symph/joy + Image
 
 Tt's an image loader for @symph/joy, we can require a image in jsx. 
 
@@ -38,9 +38,7 @@ module.exports = {
 }
 ```
 
-### Options 
-
-#### urlLoaderOptions
+### urlLoaderOptions
 
 type: object, default:
 

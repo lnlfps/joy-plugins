@@ -1,12 +1,40 @@
 const findUp = require('find-up')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const BuildManifestPlugin = require('./build-manifest-plugin-webpack')
+const {CLIENT_STATIC_FILES_PATH}  = require('@symph/joy/constants')
 
 module.exports = (
-  config,
-  { cssModules = false, cssLoaderOptions = {}, postcssLoaderOptions = {}, dev, isServer, loaders = [] }
+  webpackConfig, context, nextConfig,
+  {cssModules = false, cssLoaderOptions = {}, postcssLoaderOptions = {}, loaders = [], extractCSSPlugin}
 ) => {
+  let { dev, isServer} = context
+
+  // Support the user providing their own instance of ExtractTextPlugin.
+  // If extractCSSPlugin is not defined we pass the same instance of ExtractTextPlugin to all css related modules
+  // So that they compile to the same file in production
+  extractCSSPlugin = extractCSSPlugin || nextConfig.extractCSSPlugin || context.extractCSSPlugin
+  if (!isServer && !extractCSSPlugin && !dev) {
+    extractCSSPlugin = new MiniCssExtractPlugin({
+      filename: `${CLIENT_STATIC_FILES_PATH}/styles/[name].${dev ? '' : '[hash]'}.css`,
+      chunkFilename: `${CLIENT_STATIC_FILES_PATH}/styles/style.[hash].css`
+    })
+    webpackConfig.plugins.push(extractCSSPlugin)
+    context.extractCSSPlugin = extractCSSPlugin
+
+    webpackConfig.optimization.splitChunks.cacheGroups.styles = {
+      name: 'styles',
+      test: /\.(css|less|sass|scss)$/,
+      chunks: 'all',
+      enforce: true
+    }
+    if(!isServer){
+      webpackConfig.plugins.push(new BuildManifestPlugin())
+    }
+  }
+
+  // postcss
   const postcssConfig = findUp.sync('postcss.config.js', {
-    cwd: config.context
+    cwd: webpackConfig.context
   })
   let postcssLoader
 
