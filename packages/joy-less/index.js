@@ -1,4 +1,3 @@
-
 const cssLoaderConfig = require('@symph/joy-css/css-loader-config')
 
 module.exports = (pluginOptions = {}) => {
@@ -26,7 +25,9 @@ module.exports = (pluginOptions = {}) => {
           loaders: [
             {
               loader: 'less-loader',
-              options: lessLoaderOptions
+              options: Object.assign({
+                javascriptEnabled: true
+              }, lessLoaderOptions)
             }
           ]
         })

@@ -276,7 +276,12 @@ type: object, default:
 
 ### lessLoaderOptions
 
-type: object, default: null
+type: object, default: 
+```javascript
+{
+  javascriptEnabled: true
+}
+```
 
 可选配置项，请查阅[webpack `less-loader` README](https://github.com/webpack-contrib/less-loader).
 
